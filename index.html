@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Form</title>
+</head>
+<body>
+    <h1>Custom Form</h1>
+    <form id="customForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="phonenumber">Phone Number:</label>
+        <input type="text" id="phonenumber" name="phonenumber" required><br><br>
+
+        <!-- Hidden input for "referreduser" -->
+        <input type="hidden" id="referreduser" name="referreduser" value="">
+        
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        // Function to get query parameter value from the URL
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Set the referral value in the hidden input field
+        const referral = getQueryParam("referreduser");
+        document.getElementById("referreduser").value = referral;
+
+        document.getElementById("customForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const phonenumber = document.getElementById("phonenumber").value;
+            const referral = document.getElementById("referreduser").value;
+            const url = "https://docs.google.com/forms/d/e/1FAIpQLSeMp12PH8_yv-aDJoeV4HIVa2CwKVQEJ4TWgzsOOlaKkzBWnQ/formResponse";
+
+            // Add data to the form data
+            const formData = new FormData();
+            formData.append("entry.1684430207", name);
+            formData.append("entry.1775598047", phonenumber);
+            formData.append("entry.770261438", referral); // Use the correct field name for "referreduser"
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+                mode: "no-cors", // Cross-origin mode
+            })
+            .then(response => {
+                // Handle the response here (e.g., show a confirmation message)
+                if (response.ok) {
+                    document.getElementById("customForm").reset(); // Clear the form
+                    window.alert("Form submitted successfully!"); // Show success popup
+                } else {
+                    console.error("Form submission failed.");
+                }
+            })
+            .catch(error => {
+                // Handle any errors that occurred during the fetch.
+                console.error("Error submitting the form:", error);
+            });
+        });
+    </script>
+</body>
+</html>
